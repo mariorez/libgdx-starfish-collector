@@ -61,7 +61,6 @@ public class LevelScreen extends BaseScreen {
                     if (!(e instanceof InputEvent) || !((InputEvent) e).getType().equals(touchDown)) {
                         return false;
                     }
-
                     StarfishGame.setActiveScreen(new LevelScreen());
                     return false;
                 }
