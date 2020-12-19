@@ -40,10 +40,10 @@ public class LevelScreen extends BaseScreen {
 
         win = false;
 
+        // user interface code
+
         starfishLabel = new Label("Starfish Left:", BaseGame.labelStyle);
         starfishLabel.setColor(CYAN);
-        starfishLabel.setPosition(20, 520);
-        uiStage.addActor(starfishLabel);
 
         ButtonStyle buttonStyle = new ButtonStyle();
 
@@ -53,18 +53,16 @@ public class LevelScreen extends BaseScreen {
 
         Button restartButton = new Button(buttonStyle);
         restartButton.setColor(CYAN);
-        restartButton.setPosition(720, 520);
-        uiStage.addActor(restartButton);
+        restartButton.addListener((Event e) -> {
+            if (!(e instanceof InputEvent) || !((InputEvent) e).getType().equals(touchDown)) return false;
+            StarfishGame.setActiveScreen(new LevelScreen());
+            return false;
+        });
 
-        restartButton.addListener(
-                (Event e) -> {
-                    if (!(e instanceof InputEvent) || !((InputEvent) e).getType().equals(touchDown)) {
-                        return false;
-                    }
-                    StarfishGame.setActiveScreen(new LevelScreen());
-                    return false;
-                }
-        );
+        uiTable.pad(10);
+        uiTable.add(starfishLabel).top();
+        uiTable.add().expandX().expandY();
+        uiTable.add(restartButton).top();
     }
 
     public void update(float dt) {
