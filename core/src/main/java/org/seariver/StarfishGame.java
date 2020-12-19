@@ -1,4 +1,6 @@
-package org.seariver.game;
+package org.seariver;
+
+import org.seariver.screen.MenuScreen;
 
 public class StarfishGame extends BaseGame {
 

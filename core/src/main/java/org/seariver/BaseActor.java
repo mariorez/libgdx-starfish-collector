@@ -1,4 +1,4 @@
-package org.seariver.game;
+package org.seariver;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
@@ -139,7 +139,7 @@ public class BaseActor extends Group {
      */
     public Animation<TextureRegion> loadAnimationFromFiles(String[] fileNames, float frameDuration, boolean loop) {
         int fileCount = fileNames.length;
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        Array<TextureRegion> textureArray = new Array<>();
 
         for (int n = 0; n < fileCount; n++) {
             String fileName = fileNames[n];
@@ -148,7 +148,7 @@ public class BaseActor extends Group {
             textureArray.add(new TextureRegion(texture));
         }
 
-        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
+        Animation<TextureRegion> anim = new Animation<>(frameDuration, textureArray);
 
         if (loop)
             anim.setPlayMode(Animation.PlayMode.LOOP);
@@ -308,7 +308,7 @@ public class BaseActor extends Group {
      * @param angle of motion (degrees)
      */
     public void setMotionAngle(float angle) {
-        velocityVec.setAngle(angle);
+        velocityVec.setAngleDeg(angle);
     }
 
     /**
@@ -319,7 +319,7 @@ public class BaseActor extends Group {
      * @return angle of motion (degrees)
      */
     public float getMotionAngle() {
-        return velocityVec.angle();
+        return velocityVec.angleDeg();
     }
 
     /**
@@ -442,8 +442,8 @@ public class BaseActor extends Group {
      *
      * @param other BaseActor to check for overlap
      * @return true if collision polygons of this and other BaseActor overlap
-     * @see #setCollisionRectangle
-     * @see #setCollisionPolygon
+     * @see #setBoundaryRectangle
+     * @see #setBoundaryPolygon
      */
     public boolean overlaps(BaseActor other) {
         Polygon poly1 = this.getBoundaryPolygon();
@@ -483,6 +483,30 @@ public class BaseActor extends Group {
     }
 
     /**
+     * Determine if this BaseActor is near other BaseActor (according to collision polygons).
+     *
+     * @param distance amount (pixels) by which to enlarge collision polygon width and height
+     * @param other    BaseActor to check if nearby
+     * @return true if collision polygons of this (enlarged) and other BaseActor overlap
+     * @see #setBoundaryRectangle
+     * @see #setBoundaryPolygon
+     */
+    public boolean isWithinDistance(float distance, BaseActor other) {
+        Polygon poly1 = this.getBoundaryPolygon();
+        float scaleX = (this.getWidth() + 2 * distance) / this.getWidth();
+        float scaleY = (this.getHeight() + 2 * distance) / this.getHeight();
+        poly1.setScale(scaleX, scaleY);
+
+        Polygon poly2 = other.getBoundaryPolygon();
+
+        // initial test to improve performance
+        if (!poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()))
+            return false;
+
+        return Intersector.overlapConvexPolygons(poly1, poly2);
+    }
+
+    /**
      * Set world dimensions for use by methods boundToWorld() and scrollTo().
      *
      * @param width  width of world
@@ -499,6 +523,15 @@ public class BaseActor extends Group {
      */
     public static void setWorldBounds(BaseActor ba) {
         setWorldBounds(ba.getWidth(), ba.getHeight());
+    }
+
+    /**
+     * Get world dimensions
+     *
+     * @return Rectangle whose width/height represent world bounds
+     */
+    public static Rectangle getWorldBounds() {
+        return worldBounds;
     }
 
     /**
@@ -548,7 +581,7 @@ public class BaseActor extends Group {
      * @return list of instances of the object in stage which extend with the given class name
      */
     public static ArrayList<BaseActor> getList(Stage stage, String className) {
-        ArrayList<BaseActor> list = new ArrayList<BaseActor>();
+        ArrayList<BaseActor> list = new ArrayList<>();
 
         Class theClass = null;
         try {

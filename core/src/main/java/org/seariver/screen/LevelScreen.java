@@ -1,4 +1,4 @@
-package org.seariver.game;
+package org.seariver.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,8 +10,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import org.seariver.BaseActor;
+import org.seariver.BaseGame;
+import org.seariver.BaseScreen;
+import org.seariver.StarfishGame;
+import org.seariver.actor.Rock;
+import org.seariver.actor.Sign;
+import org.seariver.actor.Starfish;
+import org.seariver.actor.Turtle;
+import org.seariver.actor.Whirlpool;
+import org.seariver.actor.ui.DialogBox;
 
+import static com.badlogic.gdx.graphics.Color.BROWN;
 import static com.badlogic.gdx.graphics.Color.CYAN;
+import static com.badlogic.gdx.graphics.Color.TAN;
 import static com.badlogic.gdx.scenes.scene2d.InputEvent.Type.touchDown;
 
 public class LevelScreen extends BaseScreen {
@@ -19,6 +31,7 @@ public class LevelScreen extends BaseScreen {
     private Turtle turtle;
     private boolean win;
     private Label starfishLabel;
+    private DialogBox dialogBox;
 
     public void initialize() {
         BaseActor ocean = new BaseActor(0, 0, mainStage);
@@ -37,6 +50,12 @@ public class LevelScreen extends BaseScreen {
         new Rock(450, 200, mainStage);
 
         turtle = new Turtle(20, 20, mainStage);
+
+        Sign sign1 = new Sign(20, 400, mainStage);
+        sign1.setText("West Starfish Bay");
+
+        Sign sign2 = new Sign(600, 300, mainStage);
+        sign2.setText("East Starfish Bay");
 
         win = false;
 
@@ -63,13 +82,24 @@ public class LevelScreen extends BaseScreen {
         uiTable.add(starfishLabel).top();
         uiTable.add().expandX().expandY();
         uiTable.add(restartButton).top();
+
+        dialogBox = new DialogBox(0, 0, uiStage);
+        dialogBox.setBackgroundColor(TAN);
+        dialogBox.setFontColor(BROWN);
+        dialogBox.setDialogSize(600, 100);
+        dialogBox.setFontScale(0.80f);
+        dialogBox.alignCenter();
+        dialogBox.setVisible(false);
+
+        uiTable.row();
+        uiTable.add(dialogBox).colspan(3);
     }
 
     public void update(float dt) {
-        for (BaseActor rockActor : BaseActor.getList(mainStage, "org.seariver.game.Rock"))
+        for (BaseActor rockActor : BaseActor.getList(mainStage, "org.seariver.actor.Rock"))
             turtle.preventOverlap(rockActor);
 
-        for (BaseActor starfishActor : BaseActor.getList(mainStage, "org.seariver.game.Starfish")) {
+        for (BaseActor starfishActor : BaseActor.getList(mainStage, "org.seariver.actor.Starfish")) {
             Starfish starfish = (Starfish) starfishActor;
             if (turtle.overlaps(starfish) && !starfish.collected) {
                 starfish.collected = true;
@@ -83,7 +113,7 @@ public class LevelScreen extends BaseScreen {
             }
         }
 
-        if (BaseActor.count(mainStage, "org.seariver.game.Starfish") == 0 && !win) {
+        if (BaseActor.count(mainStage, "org.seariver.actor.Starfish") == 0 && !win) {
             win = true;
             BaseActor youWinMessage = new BaseActor(0, 0, uiStage);
             youWinMessage.loadTexture("you-win.png");
@@ -93,7 +123,26 @@ public class LevelScreen extends BaseScreen {
             youWinMessage.addAction(Actions.after(Actions.fadeIn(1)));
         }
 
-        starfishLabel.setText("Starfish Left: " + BaseActor.count(mainStage, "org.seariver.game.Starfish"));
+        starfishLabel.setText("Starfish Left: " + BaseActor.count(mainStage, "org.seariver.actor.Starfish"));
+
+        for (BaseActor signActor : BaseActor.getList(mainStage, "org.seariver.actor.Sign")) {
+            Sign sign = (Sign) signActor;
+
+            turtle.preventOverlap(sign);
+            boolean nearby = turtle.isWithinDistance(4, sign);
+
+            if (nearby && !sign.isViewing()) {
+                dialogBox.setText(sign.getText());
+                dialogBox.setVisible(true);
+                sign.setViewing(true);
+            }
+
+            if (sign.isViewing() && !nearby) {
+                dialogBox.setText(" ");
+                dialogBox.setVisible(false);
+                sign.setViewing(false);
+            }
+        }
     }
 
     @Override

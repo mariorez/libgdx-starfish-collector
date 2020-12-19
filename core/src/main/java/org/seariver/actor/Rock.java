@@ -1,6 +1,7 @@
-package org.seariver.game;
+package org.seariver.actor;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import org.seariver.BaseActor;
 
 public class Rock extends BaseActor {
 
