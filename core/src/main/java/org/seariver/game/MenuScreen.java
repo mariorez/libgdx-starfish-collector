@@ -19,7 +19,6 @@ public class MenuScreen extends BaseScreen {
         start.loadTexture("message-start.png");
         start.centerAtPosition(400, 300);
         start.moveBy(0, -100);
-
     }
 
     public void update(float dt) {
