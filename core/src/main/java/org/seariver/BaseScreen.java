@@ -29,7 +29,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     public abstract void update(float dt);
 
-    // Gameloop:
+    // Game-loop:
     // (1) process input (discrete handled by listener; continuous in update)
     // (2) update game logic
     // (3) render the graphics

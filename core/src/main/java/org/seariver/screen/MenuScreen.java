@@ -5,10 +5,10 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import org.seariver.BaseActor;
 import org.seariver.BaseGame;
 import org.seariver.BaseScreen;
 import org.seariver.StarfishGame;
-import org.seariver.BaseActor;
 
 import static com.badlogic.gdx.scenes.scene2d.InputEvent.Type.touchDown;
 
@@ -26,7 +26,7 @@ public class MenuScreen extends BaseScreen {
         TextButton startButton = new TextButton("Start", BaseGame.textButtonStyle);
         startButton.addListener((Event e) -> {
             if (!(e instanceof InputEvent) || !((InputEvent) e).getType().equals(touchDown)) return false;
-            StarfishGame.setActiveScreen(new LevelScreen());
+            StarfishGame.setActiveScreen(new StoryScreen());
             return false;
         });
 
@@ -43,14 +43,13 @@ public class MenuScreen extends BaseScreen {
         uiTable.add(quitButton);
     }
 
+    @Override
     public void update(float dt) {
-        if (Gdx.input.isKeyPressed(Keys.S))
-            StarfishGame.setActiveScreen(new LevelScreen());
     }
 
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Keys.ENTER))
-            StarfishGame.setActiveScreen(new LevelScreen());
+            StarfishGame.setActiveScreen(new StoryScreen());
 
         if (Gdx.input.isKeyPressed(Keys.ESCAPE))
             Gdx.app.exit();
