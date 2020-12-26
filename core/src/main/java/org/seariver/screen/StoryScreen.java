@@ -72,7 +72,7 @@ public class StoryScreen extends BaseScreen {
         scene.start();
     }
 
-    public void update(float dt) {
+    public void update(float deltaTime) {
         if (scene.isSceneFinished())
             BaseGame.setActiveScreen(new LevelScreen());
     }

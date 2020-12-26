@@ -44,7 +44,7 @@ public class MenuScreen extends BaseScreen {
     }
 
     @Override
-    public void update(float dt) {
+    public void update(float deltaTime) {
     }
 
     public boolean keyDown(int keyCode) {

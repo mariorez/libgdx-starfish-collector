@@ -135,7 +135,7 @@ public class LevelScreen extends BaseScreen {
         oceanSurf.play();
     }
 
-    public void update(float dt) {
+    public void update(float deltaTime) {
 
         for (BaseActor rockActor : BaseActor.getList(mainStage, "org.seariver.actor.Rock"))
             turtle.preventOverlap(rockActor);
@@ -185,10 +185,5 @@ public class LevelScreen extends BaseScreen {
                 sign.setViewing(false);
             }
         }
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
     }
 }

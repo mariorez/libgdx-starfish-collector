@@ -29,19 +29,19 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     public abstract void initialize();
 
-    public abstract void update(float dt);
+    public abstract void update(float deltaTime);
 
     // Game-loop:
     // (1) process input (discrete handled by listener; continuous in update)
     // (2) update game logic
     // (3) render the graphics
-    public void render(float dt) {
+    public void render(float deltaTime) {
         // act methods
-        uiStage.act(dt);
-        mainStage.act(dt);
+        uiStage.act(deltaTime);
+        mainStage.act(deltaTime);
 
         // defined by user
-        update(dt);
+        update(deltaTime);
 
         // clear the screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -112,7 +112,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         return false;
     }
 
-    public boolean scrolled(int amount) {
+    public boolean scrolled(float amountX, float amountY) {
         return false;
     }
 
