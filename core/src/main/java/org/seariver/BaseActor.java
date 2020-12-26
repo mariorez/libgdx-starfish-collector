@@ -32,6 +32,7 @@ import java.util.ArrayList;
  * @see #Actor
  */
 public class BaseActor extends Group {
+
     private Animation<TextureRegion> animation;
     private float elapsedTime;
     private boolean animationPaused;
@@ -115,15 +116,15 @@ public class BaseActor extends Group {
     /**
      * Sets the animation used when rendering this actor; also sets actor size.
      *
-     * @param anim animation that will be drawn when actor is rendered
+     * @param animation animation that will be drawn when actor is rendered
      */
-    public void setAnimation(Animation<TextureRegion> anim) {
-        animation = anim;
-        TextureRegion tr = animation.getKeyFrame(0);
-        float w = tr.getRegionWidth();
-        float h = tr.getRegionHeight();
-        setSize(w, h);
-        setOrigin(w / 2, h / 2);
+    public void setAnimation(Animation<TextureRegion> animation) {
+        this.animation = animation;
+        TextureRegion textureRegion = this.animation.getKeyFrame(0);
+        float regionWidth = textureRegion.getRegionWidth();
+        float regionHeight = textureRegion.getRegionHeight();
+        setSize(regionWidth, regionHeight);
+        setOrigin(regionWidth / 2, regionHeight / 2);
 
         if (boundaryPolygon == null)
             setBoundaryRectangle();
@@ -148,25 +149,24 @@ public class BaseActor extends Group {
             textureArray.add(new TextureRegion(texture));
         }
 
-        Animation<TextureRegion> anim = new Animation<>(frameDuration, textureArray);
+        Animation<TextureRegion> animation = new Animation<>(frameDuration, textureArray);
+        animation.setPlayMode(Animation.PlayMode.NORMAL);
 
         if (loop)
-            anim.setPlayMode(Animation.PlayMode.LOOP);
-        else
-            anim.setPlayMode(Animation.PlayMode.NORMAL);
+            animation.setPlayMode(Animation.PlayMode.LOOP);
 
-        if (animation == null)
-            setAnimation(anim);
+        if (this.animation == null)
+            setAnimation(animation);
 
-        return anim;
+        return animation;
     }
 
     /**
-     * Creates an animation from a spritesheet: a rectangular grid of images stored in a single file.
+     * Creates an animation from a sprite-sheet: a rectangular grid of images stored in a single file.
      *
-     * @param fileName      name of file containing spritesheet
-     * @param rows          number of rows of images in spritesheet
-     * @param cols          number of columns of images in spritesheet
+     * @param fileName      name of file containing sprite-sheet
+     * @param rows          number of rows of images in sprite-sheet
+     * @param cols          number of columns of images in sprite-sheet
      * @param frameDuration how long each frame should be displayed
      * @param loop          should the animation loop
      * @return animation created (useful for storing multiple animations)
@@ -179,23 +179,22 @@ public class BaseActor extends Group {
 
         TextureRegion[][] temp = TextureRegion.split(texture, frameWidth, frameHeight);
 
-        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+        Array<TextureRegion> textureArray = new Array<>();
 
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
                 textureArray.add(temp[r][c]);
 
-        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
+        Animation<TextureRegion> animation = new Animation<>(frameDuration, textureArray);
+        animation.setPlayMode(Animation.PlayMode.NORMAL);
 
         if (loop)
-            anim.setPlayMode(Animation.PlayMode.LOOP);
-        else
-            anim.setPlayMode(Animation.PlayMode.NORMAL);
+            animation.setPlayMode(Animation.PlayMode.LOOP);
 
-        if (animation == null)
-            setAnimation(anim);
+        if (this.animation == null)
+            setAnimation(animation);
 
-        return anim;
+        return animation;
     }
 
     /**
@@ -237,36 +236,37 @@ public class BaseActor extends Group {
     public void setOpacity(float opacity) {
         this.getColor().a = opacity;
     }
+
     // ----------------------------------------------
-    // physics/motion methods
+    // Physics/Motion methods
     // ----------------------------------------------
 
     /**
      * Set acceleration of this object.
      *
-     * @param acc Acceleration in (pixels/second) per second.
+     * @param acceleration Acceleration in (pixels/second) per second.
      */
-    public void setAcceleration(float acc) {
-        acceleration = acc;
+    public void setAcceleration(float acceleration) {
+        this.acceleration = acceleration;
     }
 
     /**
      * Set deceleration of this object.
      * Deceleration is only applied when object is not accelerating.
      *
-     * @param dec Deceleration in (pixels/second) per second.
+     * @param deceleration Deceleration in (pixels/second) per second.
      */
-    public void setDeceleration(float dec) {
-        deceleration = dec;
+    public void setDeceleration(float deceleration) {
+        this.deceleration = deceleration;
     }
 
     /**
      * Set maximum speed of this object.
      *
-     * @param ms Maximum speed of this object in (pixels/second).
+     * @param maxSpeed Maximum speed of this object in (pixels/second).
      */
-    public void setMaxSpeed(float ms) {
-        maxSpeed = ms;
+    public void setMaxSpeed(float maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 
     /**
@@ -332,7 +332,7 @@ public class BaseActor extends Group {
      */
     public void accelerateAtAngle(float angle) {
         accelerationVec.add(
-                new Vector2(acceleration, 0).setAngle(angle));
+                new Vector2(acceleration, 0).setAngleDeg(angle));
     }
 
     /**
@@ -353,20 +353,20 @@ public class BaseActor extends Group {
      * Speed is limited by maxSpeed value. <br>
      * Acceleration vector reset to (0,0) at end of method. <br>
      *
-     * @param dt Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
+     * @param deltaTime Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
      * @see #acceleration
      * @see #deceleration
      * @see #maxSpeed
      */
-    public void applyPhysics(float dt) {
+    public void applyPhysics(float deltaTime) {
         // apply acceleration
-        velocityVec.add(accelerationVec.x * dt, accelerationVec.y * dt);
+        velocityVec.add(accelerationVec.x * deltaTime, accelerationVec.y * deltaTime);
 
         float speed = getSpeed();
 
         // decrease speed (decelerate) when not accelerating
         if (accelerationVec.len() == 0)
-            speed -= deceleration * dt;
+            speed -= deceleration * deltaTime;
 
         // keep speed within set bounds
         speed = MathUtils.clamp(speed, 0, maxSpeed);
@@ -375,7 +375,7 @@ public class BaseActor extends Group {
         setSpeed(speed);
 
         // update position according to value stored in velocity vector
-        moveBy(velocityVec.x * dt, velocityVec.y * dt);
+        moveBy(velocityVec.x * deltaTime, velocityVec.y * deltaTime);
 
         // reset acceleration
         accelerationVec.set(0, 0);
@@ -446,14 +446,14 @@ public class BaseActor extends Group {
      * @see #setBoundaryPolygon
      */
     public boolean overlaps(BaseActor other) {
-        Polygon poly1 = this.getBoundaryPolygon();
-        Polygon poly2 = other.getBoundaryPolygon();
+        Polygon currentPoly = this.getBoundaryPolygon();
+        Polygon otherPoly = other.getBoundaryPolygon();
 
         // initial test to improve performance
-        if (!poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()))
+        if (!currentPoly.getBoundingRectangle().overlaps(otherPoly.getBoundingRectangle()))
             return false;
 
-        return Intersector.overlapConvexPolygons(poly1, poly2);
+        return Intersector.overlapConvexPolygons(currentPoly, otherPoly);
     }
 
     /**
@@ -465,15 +465,15 @@ public class BaseActor extends Group {
      * @return direction vector by which actor was translated, null if no overlap
      */
     public Vector2 preventOverlap(BaseActor other) {
-        Polygon poly1 = this.getBoundaryPolygon();
-        Polygon poly2 = other.getBoundaryPolygon();
+        Polygon currentPoly = this.getBoundaryPolygon();
+        Polygon otherPoly = other.getBoundaryPolygon();
 
         // initial test to improve performance
-        if (!poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()))
+        if (!currentPoly.getBoundingRectangle().overlaps(otherPoly.getBoundingRectangle()))
             return null;
 
         MinimumTranslationVector mtv = new MinimumTranslationVector();
-        boolean polygonOverlap = Intersector.overlapConvexPolygons(poly1, poly2, mtv);
+        boolean polygonOverlap = Intersector.overlapConvexPolygons(currentPoly, otherPoly, mtv);
 
         if (!polygonOverlap)
             return null;
@@ -492,18 +492,18 @@ public class BaseActor extends Group {
      * @see #setBoundaryPolygon
      */
     public boolean isWithinDistance(float distance, BaseActor other) {
-        Polygon poly1 = this.getBoundaryPolygon();
+        Polygon currentPoly = this.getBoundaryPolygon();
         float scaleX = (this.getWidth() + 2 * distance) / this.getWidth();
         float scaleY = (this.getHeight() + 2 * distance) / this.getHeight();
-        poly1.setScale(scaleX, scaleY);
+        currentPoly.setScale(scaleX, scaleY);
 
-        Polygon poly2 = other.getBoundaryPolygon();
+        Polygon otherPoly = other.getBoundaryPolygon();
 
         // initial test to improve performance
-        if (!poly1.getBoundingRectangle().overlaps(poly2.getBoundingRectangle()))
+        if (!currentPoly.getBoundingRectangle().overlaps(otherPoly.getBoundingRectangle()))
             return false;
 
-        return Intersector.overlapConvexPolygons(poly1, poly2);
+        return Intersector.overlapConvexPolygons(currentPoly, otherPoly);
     }
 
     /**
@@ -521,8 +521,8 @@ public class BaseActor extends Group {
      *
      * @param BaseActor whose size determines the world bounds (typically a background image)
      */
-    public static void setWorldBounds(BaseActor ba) {
-        setWorldBounds(ba.getWidth(), ba.getHeight());
+    public static void setWorldBounds(BaseActor referenceActor) {
+        setWorldBounds(referenceActor.getWidth(), referenceActor.getHeight());
     }
 
     /**
@@ -581,9 +581,11 @@ public class BaseActor extends Group {
      * @return list of instances of the object in stage which extend with the given class name
      */
     public static ArrayList<BaseActor> getList(Stage stage, String className) {
+
         ArrayList<BaseActor> list = new ArrayList<>();
 
         Class theClass = null;
+
         try {
             theClass = Class.forName(className);
         } catch (Exception error) {
@@ -616,13 +618,13 @@ public class BaseActor extends Group {
      * Processes all Actions and related code for this object;
      * automatically called by act method in Stage class.
      *
-     * @param dt elapsed time (second) since last frame (supplied by Stage act method)
+     * @param deltaTime elapsed time (second) since last frame (supplied by Stage act method)
      */
-    public void act(float dt) {
-        super.act(dt);
+    public void act(float deltaTime) {
+        super.act(deltaTime);
 
         if (!animationPaused)
-            elapsedTime += dt;
+            elapsedTime += deltaTime;
     }
 
     /**
