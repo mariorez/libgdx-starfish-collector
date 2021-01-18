@@ -2,6 +2,8 @@
 
 Starfish Collector, where you help the player’s character, a turtle, swim around the ocean floor while looking for a starfish.
 
+![alt text](starfish-collector.png "Starfish Collector")
+
 ## Setup
 
 - Java 8
