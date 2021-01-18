@@ -2,6 +2,10 @@
 
 Starfish Collector, where you help the player’s character, a turtle, swim around the ocean floor while looking for a starfish.
 
+Controls
+
+- Left, Right, Up and Down keys: moves the turtle
+
 ![alt text](starfish-collector.png "Starfish Collector")
 
 ## Setup
