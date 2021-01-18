@@ -6,12 +6,12 @@ Controls
 
 - Left, Right, Up and Down keys: moves the turtle
 
-![alt text](starfish-collector.png "Starfish Collector")
+![alt text](starfishcollector-screeshot.png "Starfish Collector")
 
 ## Setup
 
 - Java 8
-- LigGDX 1.9.12: https://libgdx.badlogicgames.com
+- LigGDX 1.9.13: https://libgdx.badlogicgames.com
 - Setup tool: https://github.com/tommyettinger/gdx-liftoff
 
 ## Disclaimer
