@@ -23,9 +23,9 @@ public class Turtle extends BaseActor {
         setBoundaryPolygon(8);
     }
 
-    public void act(float dt) {
+    public void act(float deltaTime) {
 
-        super.act(dt);
+        super.act(deltaTime);
 
         if (Gdx.input.isKeyPressed(Keys.LEFT))
             accelerateAtAngle(180);
@@ -36,7 +36,7 @@ public class Turtle extends BaseActor {
         if (Gdx.input.isKeyPressed(Keys.DOWN))
             accelerateAtAngle(270);
 
-        applyPhysics(dt);
+        applyPhysics(deltaTime);
 
         setAnimationPaused(!isMoving());
 
