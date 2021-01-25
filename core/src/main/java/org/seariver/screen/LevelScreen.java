@@ -60,7 +60,7 @@ public class LevelScreen extends BaseScreen {
 
         MapObject startPoint = tilemapActor.getRectangleList("Start").get(0);
         MapProperties props = startPoint.getProperties();
-        turtle = new Turtle( (float)props.get("x"), (float)props.get("y"), mainStage);
+        turtle = new Turtle((float) props.get("x"), (float) props.get("y"), mainStage);
 
         win = false;
 

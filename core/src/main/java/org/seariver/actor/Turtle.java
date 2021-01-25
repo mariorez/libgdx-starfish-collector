@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.seariver.BaseActor;
 
+import static com.badlogic.gdx.Gdx.*;
 import static com.badlogic.gdx.Input.Keys;
 
 public class Turtle extends BaseActor {
@@ -27,14 +28,10 @@ public class Turtle extends BaseActor {
 
         super.act(deltaTime);
 
-        if (Gdx.input.isKeyPressed(Keys.LEFT))
-            accelerateAtAngle(180);
-        if (Gdx.input.isKeyPressed(Keys.RIGHT))
-            accelerateAtAngle(0);
-        if (Gdx.input.isKeyPressed(Keys.UP))
-            accelerateAtAngle(90);
-        if (Gdx.input.isKeyPressed(Keys.DOWN))
-            accelerateAtAngle(270);
+        if (input.isKeyPressed(Keys.LEFT))  accelerateAtAngle(180);
+        if (input.isKeyPressed(Keys.RIGHT)) accelerateAtAngle(0);
+        if (input.isKeyPressed(Keys.UP))    accelerateAtAngle(90);
+        if (input.isKeyPressed(Keys.DOWN))  accelerateAtAngle(270);
 
         applyPhysics(deltaTime);
 
