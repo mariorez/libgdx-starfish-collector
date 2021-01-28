@@ -1,10 +1,9 @@
 package org.seariver.actor;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.seariver.BaseActor;
 
-import static com.badlogic.gdx.Gdx.*;
+import static com.badlogic.gdx.Gdx.input;
 import static com.badlogic.gdx.Input.Keys;
 
 public class Turtle extends BaseActor {
